@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mushroom Edibility Classification Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 
+        Chosen Palette: Brilliant Blues & Warm Accents (#003f5c, #665191, #d45087, #ffa600)
+        Application Structure Plan: A narrative, single-page scrolling infographic. The structure follows the machine learning workflow: 1. Introduction to the problem. 2. Data cleaning challenges. 3. An initial comparison of three models. 4. An analysis of the most important predictive features. 5. A second model comparison using only those key features. 6. A final conclusion. This linear story is the most intuitive way for a user to understand the project's progression and key findings.
+        Visualization & Content Choices: 
+        - Data Cleaning Stat -> Inform -> Single Big Number -> Highlights the data quality issue that was addressed -> HTML/CSS. NO SVG.
+        - Initial Model Accuracies -> Compare -> Vertical Bar Chart -> Clearly compares the performance of the three models on the full dataset -> Chart.js/Canvas. NO SVG.
+        - Feature Importance -> Organize/Rank -> Horizontal Bar Chart -> Best for ranking features with long names against their importance score -> Chart.js/Canvas. NO SVG.
+        - Retrained Model Accuracies -> Compare -> Vertical Bar Chart -> Directly compares performance on the reduced feature set, showing the Decision Tree's robustness -> Chart.js/Canvas. NO SVG.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-2" style="color: #003f5c;">Can Machine Learning Detect a Poisonous Mushroom?</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">An analysis of classifying mushroom edibility using physical attributes and three distinct predictive models.</p>
+        </header>
+
+        <main class="space-y-12">
+
+            <section id="data-cleaning" class="bg-white rounded-lg shadow-md p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div class="md:col-span-1 text-center">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900" style="color: #665191;">Data Preparation</h2>
+                    <div class="p-6 rounded-lg bg-slate-50">
+                        <p class="text-6xl font-bold" style="color: #d45087;">30.53%</p>
+                        <p class="mt-2 font-semibold">of 'stalk-root' data was missing.</p>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <p class="text-lg mb-4">Before any model can be trained, the data must be clean and reliable. The initial dataset presented a challenge: a significant portion of the `stalk-root` feature contained missing values marked with a '?'.</p>
+                    <p>This was addressed by replacing the missing entries with the feature's most common value (the mode). Additionally, the `veil-type` column was removed entirely because it contained only one value, offering no predictive power. Finally, all text-based categories were converted into numbers the models could understand.</p>
+                </div>
+            </section>
+
+            <section id="round-1" class="text-center">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2" style="color: #003f5c;">Model Showdown: Round 1</h2>
+                <p class="max-w-3xl mx-auto mb-8">Three models were trained on the full, cleaned dataset to establish a performance baseline. The Decision Tree model immediately stood out with perfect accuracy.</p>
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <div class="chart-container">
+                        <canvas id="initialModelsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="feature-importance" class="text-center">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2" style="color: #003f5c;">What Really Matters? Identifying Key Features</h2>
+                <p class="max-w-3xl mx-auto mb-8">Not all physical attributes are equally important. By analyzing the perfect Decision Tree model, we can identify which features were most influential in making a correct prediction.</p>
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <div class="chart-container">
+                        <canvas id="featureImportanceChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="round-2" class="text-center">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2" style="color: #003f5c;">Model Showdown: Round 2 (Leaner & Meaner)</h2>
+                <p class="max-w-3xl mx-auto mb-8">With the most important features identified, the models were retrained on this smaller, more focused dataset. The Decision Tree's performance remained flawless, proving its efficiency.</p>
+                <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                    <div class="chart-container">
+                        <canvas id="retrainedModelsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="conclusion" class="bg-white rounded-lg shadow-md p-8 text-center" style="background-color: #003f5c; color: white;">
+                <h2 class="text-3xl font-bold mb-4">Conclusion: A Clear Winner</h2>
+                <p class="text-xl max-w-3xl mx-auto">The **Decision Tree Classifier** is the superior model for this task, achieving **100% accuracy** even with a reduced feature set. This project demonstrates that not only can machine learning reliably classify mushroom edibility, but also that features like <span style="color: #ffa600; font-weight: bold;">gill color</span> and <span style="color: #ffa600; font-weight: bold;">spore-print-color</span> are incredibly powerful predictors.</p>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        const chartTooltipCallback = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+        
+        const wrapLabel = (label) => {
+            const maxLength = 16;
+            if (label.length <= maxLength) return label;
+            const words = label.split('-');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > maxLength) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + '-';
+            });
+            lines.push(currentLine.slice(0, -1).trim());
+            return lines;
+        };
+
+        const palette = ['#003f5c', '#665191', '#d45087'];
+        const featurePalette = ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600'];
+
+        const initialModelsCtx = document.getElementById('initialModelsChart').getContext('2d');
+        new Chart(initialModelsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Logistic Regression', 'SVM', 'Decision Tree'],
+                datasets: [{
+                    label: 'Model Accuracy (%)',
+                    data: [95.24, 96.64, 100.00],
+                    backgroundColor: palette,
+                    borderColor: palette.map(c => c + 'B3'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...chartTooltipCallback,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: { display: true, text: 'Accuracy (%)' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const featureImportanceCtx = document.getElementById('featureImportanceChart').getContext('2d');
+        const featureLabels = ['gill-color', 'spore-print-color', 'population', 'gill-size', 'odor', 'bruises', 'habitat', 'stalk-shape', 'stalk-color-below-ring'];
+        new Chart(featureImportanceCtx, {
+            type: 'bar',
+            data: {
+                labels: featureLabels.map(wrapLabel),
+                datasets: [{
+                    label: 'Feature Importance',
+                    data: [0.343, 0.211, 0.185, 0.110, 0.043, 0.02, 0.019, 0.018, 0.017],
+                    backgroundColor: featurePalette,
+                    borderColor: featurePalette.map(c => c + 'B3'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...chartTooltipCallback,
+                indexAxis: 'y',
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Importance Score' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        const retrainedModelsCtx = document.getElementById('retrainedModelsChart').getContext('2d');
+        new Chart(retrainedModelsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Logistic Regression', 'SVM', 'Decision Tree'],
+                datasets: [{
+                    label: 'Model Accuracy (%) on Extracted Features',
+                    data: [89.83, 91.14, 100.00],
+                    backgroundColor: palette,
+                    borderColor: palette.map(c => c + 'B3'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...chartTooltipCallback,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: { display: true, text: 'Accuracy (%)' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
